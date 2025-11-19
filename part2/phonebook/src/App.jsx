@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personServices from './services/persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
@@ -11,10 +11,9 @@ const App = () => {
   const [filter, setNewFilter] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(res => {
-        setPersons(res.data)
+    personServices.getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -28,18 +27,53 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.some(person => person.name === newName)) {
-      alert(`${newName} already exists`)
-      return
+    const alreadyExists = persons.find(person => person.name === newName)
+
+    if (alreadyExists) {
+      if (!confirm(`${newName} already exists`)) return
+      const updatedPerson = { ...alreadyExists, number: newNumber }
+      
+      personServices
+        .update(updatedPerson.id, updatedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => 
+            person.id === returnedPerson.id ? returnedPerson : person
+          ))
+        })
+        setNewName('')
+        setNewNumber('')
+
+    } else {
+      
+      const personObj = {
+        name: newName,
+        number: newNumber,
+      }
+  
+      personServices.create(personObj)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
-    const personObj = {
-      name: newName,
-      number: newNumber,
-      id: String(persons.length + 1)
-    }
-    setPersons(persons.concat(personObj))
-    setNewName('')
-    setNewNumber('')
+
+  }
+
+  const deletePerson = (id, name) => {
+    if (!confirm(`Delete ${name}?`)) return
+    
+    personServices.remove(id)
+      .then(removedPerson =>
+        setPersons(persons.filter(person => person.id !== removedPerson.id))
+      )
+      .catch(err => {
+        console.log(err)
+        alert(`${name} has already been deleted`)
+      })
   }
 
   return (
@@ -53,7 +87,7 @@ const App = () => {
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
 
       <h2>Numbers</h2>
-      <Persons shownPersons={shownPersons}/>      
+      <Persons shownPersons={shownPersons} onClick={(id, name) => deletePerson(id, name)} />      
     </div>
   )
 }
