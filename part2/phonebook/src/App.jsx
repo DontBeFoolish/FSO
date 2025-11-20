@@ -3,12 +3,14 @@ import personServices from './services/persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setNewFilter] = useState('')
+  const [notificationInfo, setNotificationInfo] = useState(null)
 
   useEffect(() => {
     personServices.getAll()
@@ -53,11 +55,15 @@ const App = () => {
       personServices.create(personObj)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setNotificationInfo({ message: `added ${newName} to directory`, type: 'success' })
+          setTimeout(() => setNotificationInfo(null), 3000)
           setNewName('')
           setNewNumber('')
         })
         .catch(err => {
           console.log(err)
+          setNotificationInfo({ message: `unable to add ${newName} to directory`, type: 'error' })
+          setTimeout(() => setNotificationInfo(null), 3000)
         })
     }
 
@@ -67,17 +73,22 @@ const App = () => {
     if (!confirm(`Delete ${name}?`)) return
     
     personServices.remove(id)
-      .then(() =>
+      .then(() => {
         setPersons(persons.filter(person => person.id !== id))
-      )
+        setNotificationInfo({ message:`${name} deleted`, type:'success' })
+        setTimeout(() => setNotificationInfo(null), 3000)
+      }
+    )
       .catch(err => {
         console.log(err)
-        alert(`${name} has already been deleted`)
+        setNotificationInfo({ message:`${name} has already been deleted`, type:'error' })
+        setTimeout(() => setNotificationInfo(null), 3000)
       })
   }
 
   return (
     <div>
+      <Notification info={notificationInfo}/>
       <h2>Phonebook</h2>
       <Filter handleFilterChange={handleFilterChange}/>
 
