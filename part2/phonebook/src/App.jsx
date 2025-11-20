@@ -27,21 +27,21 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const alreadyExists = persons.find(person => person.name === newName)
+    const existing = persons.find(person => person.name === newName)
 
-    if (alreadyExists) {
+    if (existing) {
       if (!confirm(`${newName} already exists`)) return
-      const updatedPerson = { ...alreadyExists, number: newNumber }
-      
+      const updatedPerson = { ...existing, number: newNumber }
+
       personServices
-        .update(updatedPerson.id, updatedPerson)
+        .update(existing.id, updatedPerson)
         .then(returnedPerson => {
           setPersons(persons.map(person => 
-            person.id === returnedPerson.id ? returnedPerson : person
+            person.id === existing.id ? returnedPerson : person
           ))
+          setNewName('')
+          setNewNumber('')
         })
-        setNewName('')
-        setNewNumber('')
 
     } else {
       
@@ -67,8 +67,8 @@ const App = () => {
     if (!confirm(`Delete ${name}?`)) return
     
     personServices.remove(id)
-      .then(removedPerson =>
-        setPersons(persons.filter(person => person.id !== removedPerson.id))
+      .then(() =>
+        setPersons(persons.filter(person => person.id !== id))
       )
       .catch(err => {
         console.log(err)
