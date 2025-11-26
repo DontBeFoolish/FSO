@@ -28,19 +28,9 @@ app.get('/api/people', (req, res) => {
 })
 
 app.get('/api/people/:id', (req, res) => {
-  Person.findById(req.params.id)
-    .then(person => {
-      if (person) {
-        res.json(person)
-      } else {
-        console.log(person)
-        res.status(404).end()
-      }
-    })
-    .catch(error => {
-      console.log(error)
-      res.status(400).send({ error: 'malformatted id' })
-    }) 
+  Person.findById(req.params.id).then(person => {
+    res.json(person)
+  })
 })
 
 app.post('/api/people', (req, res) => {
@@ -53,8 +43,7 @@ app.post('/api/people', (req, res) => {
     number: req.body.number
   })
 
-  person.save()
-    .then(savedPerson => {
+  person.save().then(savedPerson => {
       res.json(savedPerson)
     })  
 })
