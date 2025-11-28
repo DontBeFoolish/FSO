@@ -45,10 +45,6 @@ app.get('/api/people/:id', (req, res, next) => {
 })
 
 app.post('/api/people', (req, res, next) => {
-  if (!req.body.name || !req.body.number) {
-    return res.status(400).json({ error: 'missing information' })
-  }
-
   const person = new Person({
     name: req.body.name,
     number: req.body.number
@@ -69,7 +65,7 @@ app.put('/api/people/:id', (req, res, next) => {
       }
 
       person.number = req.body.number
-      return person.save().then(updatedPerson => {
+      return person.save().then((updatedPerson) => {
         res.json(updatedPerson)
       })
     })
