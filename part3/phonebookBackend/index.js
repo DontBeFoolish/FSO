@@ -10,16 +10,16 @@ app.use(express.static('dist'))
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('/info', (req, res) => {
-  const time = new Date()
-  const total = persons.length
-  res.send(`
-    <div>
-      <p>Phonebook has info for ${total} people</p>
-      <p>${time}</p>
-    </div>
-    `)
-})
+//app.get('/info', (req, res) => {
+//  const time = new Date()
+//  const total = persons.length
+//  res.send(`
+//    <div>
+//      <p>Phonebook has info for ${total} people</p>
+//      <p>${time}</p>
+//    </div>
+//    `)
+//})
 
 app.get('/api/people', (req, res) => {
   Person.find({}).then(person => {
@@ -46,6 +46,12 @@ app.post('/api/people', (req, res) => {
   person.save().then(savedPerson => {
       res.json(savedPerson)
     })  
+})
+
+app.delete('/api/people/:id', (req, res) => {
+  Person.findByIdAndDelete(req.params.id).then(result => {
+    res.status(204).end()
+  })
 })
 
 const PORT = process.env.PORT || 3001
