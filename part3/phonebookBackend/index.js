@@ -53,6 +53,21 @@ app.post('/api/people', (req, res) => {
     })  
 })
 
+app.put('/api/people/:id', (req, res, next) => {
+  Person.findById(req.params.id).then(person => {
+    if (!person) {
+      return res.status(404).end()
+    }
+
+    person.number = req.body.number
+    return person.save().then(updatedPerson => {
+      res.json(updatedPerson)
+    })
+  })
+  .catch(error => next(error))
+})
+
+
 app.delete('/api/people/:id', (req, res, next) => {
   Person.findByIdAndDelete(req.params.id).then(result => {
     res.status(204).end()
