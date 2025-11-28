@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import personServices from './services/people'
+import personService from './services/people'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import People from './components/People'
@@ -13,7 +13,7 @@ const App = () => {
   const [notificationInfo, setNotificationInfo] = useState(null)
 
   useEffect(() => {
-    personServices.getAll()
+    personService.getAll()
       .then(initialPeople => {
         setPeople(initialPeople)
       })
@@ -35,7 +35,7 @@ const App = () => {
       if (!confirm(`${newName} already exists`)) return
       const updatedPerson = { ...existing, number: newNumber }
 
-      personServices
+      personService
         .update(existing.id, updatedPerson)
         .then(returnedPerson => {
           setPeople(people.map(person => 
@@ -52,7 +52,7 @@ const App = () => {
         number: newNumber,
       }
   
-      personServices.create(personObj)
+      personService.create(personObj)
         .then(returnedPerson => {
           setPeople(people.concat(returnedPerson))
           setNotificationInfo({ message: `added ${newName} to directory`, type: 'success' })
@@ -62,7 +62,7 @@ const App = () => {
         })
         .catch(err => {
           console.log(err)
-          setNotificationInfo({ message: `unable to add ${newName} to directory`, type: 'error' })
+          setNotificationInfo({ message: err.response.data.error, type: 'error' })
           setTimeout(() => setNotificationInfo(null), 3000)
         })
     }
@@ -72,7 +72,7 @@ const App = () => {
   const deletePerson = (id, name) => {
     if (!confirm(`Delete ${name}?`)) return
     
-    personServices.remove(id)
+    personService.remove(id)
       .then(() => {
         setPeople(people.filter(person => person.id !== id))
         setNotificationInfo({ message:`${name} deleted`, type:'success' })
