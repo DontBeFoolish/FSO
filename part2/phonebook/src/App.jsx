@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import personServices from './services/persons'
+import personServices from './services/people'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
-import Persons from './components/Persons'
+import People from './components/People'
 import Notification from './components/Notification'
 
 const App = () => {
-  const [persons, setPersons] = useState([])
+  const [people, setPeople] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setNewFilter] = useState('')
@@ -14,12 +14,12 @@ const App = () => {
 
   useEffect(() => {
     personServices.getAll()
-      .then(initialPersons => {
-        setPersons(initialPersons)
+      .then(initialPeople => {
+        setPeople(initialPeople)
       })
   }, [])
 
-  const shownPersons = persons.filter(person => 
+  const shownPeople = people.filter(person => 
     person.name.toLowerCase().includes(filter.toLowerCase())
   )
 
@@ -29,7 +29,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const existing = persons.find(person => person.name === newName)
+    const existing = people.find(person => person.name === newName)
 
     if (existing) {
       if (!confirm(`${newName} already exists`)) return
@@ -38,7 +38,7 @@ const App = () => {
       personServices
         .update(existing.id, updatedPerson)
         .then(returnedPerson => {
-          setPersons(persons.map(person => 
+          setPeople(people.map(person => 
             person.id === existing.id ? returnedPerson : person
           ))
           setNewName('')
@@ -54,7 +54,7 @@ const App = () => {
   
       personServices.create(personObj)
         .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
+          setPeople(people.concat(returnedPerson))
           setNotificationInfo({ message: `added ${newName} to directory`, type: 'success' })
           setTimeout(() => setNotificationInfo(null), 3000)
           setNewName('')
@@ -74,7 +74,7 @@ const App = () => {
     
     personServices.remove(id)
       .then(() => {
-        setPersons(persons.filter(person => person.id !== id))
+        setPeople(people.filter(person => person.id !== id))
         setNotificationInfo({ message:`${name} deleted`, type:'success' })
         setTimeout(() => setNotificationInfo(null), 3000)
       }
@@ -98,7 +98,7 @@ const App = () => {
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
 
       <h2>Numbers</h2>
-      <Persons shownPersons={shownPersons} onClick={(id, name) => deletePerson(id, name)} />      
+      <People shownPeople={shownPeople} onClick={(id, name) => deletePerson(id, name)} />      
     </div>
   )
 }
