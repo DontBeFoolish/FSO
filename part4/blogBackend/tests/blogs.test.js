@@ -1,9 +1,14 @@
-const { test, after, beforeEach } = require('node:test');
 const assert = require('node:assert');
+const {
+  test,
+  after,
+  beforeEach,
+  describe,
+} = require('node:test');
 const supertest = require('supertest');
 const mongoose = require('mongoose');
-const app = require('../app');
 const Blog = require('../models/blog');
+const app = require('../app');
 
 const api = supertest(app);
 
@@ -20,6 +25,18 @@ const initialBlogs = [
     url: 'http://example.com/blog2',
     likes: 10,
   },
+  {
+    title: 'Third Blog',
+    author: 'Joe Montana',
+    url: 'http://example.com/blog1',
+    likes: 5,
+  },
+  {
+    title: 'Fourth Blog',
+    author: 'Albert Einstein',
+    url: 'http://example.com/blog2',
+    likes: 10,
+  },
 ];
 
 beforeEach(async () => {
@@ -33,7 +50,7 @@ test('the correct number of blogs are returned as json', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/);
 
-  assert.strictEqual(response.body.length, 2);
+  assert.strictEqual(response.body.length, initialBlogs.length);
 });
 
 test('the unique id property of blog posts is id', async () => {
@@ -44,69 +61,97 @@ test('the unique id property of blog posts is id', async () => {
   });
 });
 
-test('valid blog can be added', async () => {
-  const newBlog = {
-    title: 'Third Blog',
-    author: 'Joe Blow',
-    url: 'http://example.com/blog3',
-    likes: 15,
-  };
+describe('blog creation', () => {
+  test('succeeds with valid data', async () => {
+    const newBlog = {
+      title: 'New Blog',
+      author: 'Joe Blow',
+      url: 'http://example.com/blog3',
+      likes: 15,
+    };
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
 
-  const response = await api.get('/api/blogs');
-  const titles = response.body.map((r) => r.title);
+    const blogsAfter = await api.get('/api/blogs');
+    assert.strictEqual(blogsAfter.body.length, initialBlogs.length + 1);
 
-  assert.strictEqual(response.body.length, initialBlogs.length + 1);
-  assert(titles.includes('Third Blog'));
+    const titles = blogsAfter.body.map((r) => r.title);
+    assert(titles.includes('New Blog'));
+  });
+
+  test('sets vote value to 0 if missing', async () => {
+    const newBlog = {
+      title: 'New Blog',
+      author: 'Mary Moe',
+      url: 'http://example.com/blog4',
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201);
+
+    const blogsAfter = await api.get('/api/blogs');
+    assert.strictEqual(blogsAfter.body.length, initialBlogs.length + 1);
+
+    const addedBlog = blogsAfter.body.find((b) => b.title === 'New Blog');
+    assert.strictEqual(addedBlog.likes, 0);
+  });
+
+  test('fails with missing title', async () => {
+    const newBlog = {
+      author: 'The Joker',
+      url: 'http://example.com/blog5',
+      likes: 15,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400);
+
+    const blogsAfter = await api.get('/api/blogs');
+    assert.strictEqual(blogsAfter.body.length, initialBlogs.length);
+  });
+
+  test('fails with missing url', async () => {
+    const newBlog = {
+      title: 'Fifth Blog',
+      author: 'Michael Scott',
+      likes: 15,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400);
+
+    const blogsAfter = await api.get('/api/blogs');
+    assert.strictEqual(blogsAfter.body.length, initialBlogs.length);
+  });
 });
 
-test('blog posted without likes will default to 0', async () => {
-  const newBlog = {
-    title: 'Fourth Blog',
-    author: 'Mary Moe',
-    url: 'http://example.com/blog4',
-  };
+describe('blog deletion', () => {
+  test('succeeds with code 204 if valid id', async () => {
+    const blogsBefore = await api.get('/api/blogs');
+    const blogToDelete = blogsBefore.body[0];
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201);
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
 
-  const response = await api.get('/api/blogs');
-  const addedBlog = response.body.find((b) => b.title === 'Fourth Blog');
+    const blogsAfter = await api.get('/api/blogs');
+    const blogTitles = blogsAfter.body.map((b) => b.title);
 
-  assert.strictEqual(addedBlog.likes, 0);
-});
-
-test('blog posted without title is rejected', async () => {
-  const newBlog = {
-    author: 'The Joker',
-    url: 'http://example.com/blog5',
-    likes: 15,
-  };
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400);
-});
-
-test('blog posted without url is rejected', async () => {
-  const newBlog = {
-    title: 'Fifth Blog',
-    author: 'Michael Scott',
-    likes: 15,
-  };
-
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400);
+    assert(!blogTitles.includes(blogToDelete.title));
+    assert.strictEqual(blogsAfter.body.length, blogsBefore.body.length - 1);
+  });
+  test('fails with code 400 if invalid id', async () => {
+    const invalidId = '5a3d5da59070081a82a3445';
+    await api.delete(`/api/blogs/${invalidId}`).expect(400);
+  });
 });
 
 after(async () => mongoose.connection.close());
