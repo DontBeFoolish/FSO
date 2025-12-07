@@ -9,35 +9,9 @@ const supertest = require('supertest');
 const mongoose = require('mongoose');
 const Blog = require('../models/blog');
 const app = require('../app');
+const { initialBlogs, nonExistentID } = require('../utils/blog_helper');
 
 const api = supertest(app);
-
-const initialBlogs = [
-  {
-    title: 'First Blog',
-    author: 'John Doe',
-    url: 'http://example.com/blog1',
-    likes: 5,
-  },
-  {
-    title: 'Second Blog',
-    author: 'Jane Smith',
-    url: 'http://example.com/blog2',
-    likes: 10,
-  },
-  {
-    title: 'Third Blog',
-    author: 'Joe Montana',
-    url: 'http://example.com/blog1',
-    likes: 5,
-  },
-  {
-    title: 'Fourth Blog',
-    author: 'Albert Einstein',
-    url: 'http://example.com/blog2',
-    likes: 10,
-  },
-];
 
 beforeEach(async () => {
   await Blog.deleteMany({});
@@ -151,6 +125,30 @@ describe('blog deletion', () => {
   test('fails with code 400 if invalid id', async () => {
     const invalidId = '5a3d5da59070081a82a3445';
     await api.delete(`/api/blogs/${invalidId}`).expect(400);
+  });
+  test('fails with code 404 if nonexistent id', async () => {
+    const id = await nonExistentID();
+    await api.delete(`/api/blogs/${id}`).expect(404);
+  });
+});
+
+describe('update likes', () => {
+  test('succeeds with code 200 valid id', async () => {
+    const blogsBefore = await api.get('/api/blogs');
+
+    const updatedBlog = await api
+      .put(`/api/blogs/${blogsBefore.body[2].id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+    assert.strictEqual(updatedBlog.body.likes, blogsBefore.body[2].likes + 1);
+  });
+  test('fails with code 400 invalid id', async () => {
+    const invalidId = '5a3d5da59070081a82a3445';
+    await api.put(`/api/blogs/${invalidId}`).expect(400);
+  });
+  test('fails with code 404 nonexistent id', async () => {
+    const id = await nonExistentID();
+    await api.put(`/api/blogs/${id}`).expect(404);
   });
 });
 
