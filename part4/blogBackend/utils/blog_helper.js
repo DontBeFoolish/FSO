@@ -1,5 +1,6 @@
 const supertest = require('supertest');
 const app = require('../app');
+const User = require('../models/user');
 
 const api = supertest(app);
 
@@ -44,6 +45,11 @@ const nonExistentID = async () => {
   return blogToDelete.id;
 };
 
+const usersInDb = async () => {
+  const users = await User.find({});
+  return users.map((u) => u.toJSON());
+};
+
 module.exports = {
-  initialBlogs, nonExistentID,
+  initialBlogs, nonExistentID, usersInDb,
 };

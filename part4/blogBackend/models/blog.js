@@ -14,9 +14,12 @@ const blogSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+  },
 });
 
-/* eslint-disable no-param-reassign, no-underscore-dangle */
 blogSchema.set('toJSON', {
   transform: (document, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
@@ -24,6 +27,5 @@ blogSchema.set('toJSON', {
     delete returnedObj.__v;
   },
 });
-/* eslint-disable no-param-reassign, no-underscore-dangle */
 
 module.exports = mongoose.model('Blog', blogSchema);
