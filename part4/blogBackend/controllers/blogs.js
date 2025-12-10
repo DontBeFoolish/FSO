@@ -3,12 +3,12 @@ const Blog = require('../models/blog');
 const User = require('../models/user');
 
 blogsRouter.get('/', async (request, response) => {
-  const result = await Blog.find({});
+  const result = await Blog.find({}).populate('user', { username: 1, name: 1 });
   return response.json(result);
 });
 
 blogsRouter.post('/', async (request, response) => {
-  const user = await User.findById(request.body.userId);
+  const user = await User.findOne({});
   if (!user) {
     return response.status(400).json({ error: 'userId missing/invalid' });
   }
