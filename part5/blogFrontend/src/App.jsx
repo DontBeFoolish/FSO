@@ -118,15 +118,17 @@ function App() {
             logged in -
             <button type="button" onClick={handleLogout}>Logout</button>
           </p>
-          {blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user}
-              handleLike={handleLike}
-              handleDelete={handleDelete}
-            />
-          ))}
+          <ul>
+            {blogs.map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                user={user}
+                handleLike={handleLike}
+                handleDelete={handleDelete}
+              />
+            ))}
+          </ul>
           <Togglable buttonOpen="create blog" buttonClose="cancel" ref={blogFormRef}>
             <BlogForm addBlog={addBlog} />
           </Togglable>

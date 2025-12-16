@@ -19,19 +19,19 @@ function BlogForm({ addBlog }) {
 
   return (
     <form onSubmit={createBlog}>
-      <label htmlFor="title">
+      <label>
         Title:
         <input value={title} onChange={({ target }) => setTitle(target.value)} />
       </label>
-      <label htmlFor="author">
+      <label>
         Author:
         <input value={author} onChange={({ target }) => setAuthor(target.value)} />
       </label>
-      <label htmlFor="url">
+      <label>
         URL:
         <input value={url} onChange={({ target }) => setUrl(target.value)} />
       </label>
-      <button type="button">Create</button>
+      <button type="submit">Create</button>
     </form>
   );
 }
