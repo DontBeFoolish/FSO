@@ -61,7 +61,7 @@ function App() {
       blogFormRef.current.toggleVisibility();
       const response = await blogService.create(newBlog);
       setBlogs(blogs.concat(response));
-      const message = `a new blog ${newBlog.title} by ${newBlog.author} successfully added`;
+      const message = `successfully added blog`;
       showNotification(setNotifInfo, message, 'success');
     } catch (error) {
       const message = error.response.data.error;
@@ -114,8 +114,7 @@ function App() {
         <>
           <h2>blogs</h2>
           <p>
-            {user.name}
-            logged in -
+            {user.name} logged in -
             <button type="button" onClick={handleLogout}>Logout</button>
           </p>
           <ul>
