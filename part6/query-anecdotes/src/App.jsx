@@ -6,14 +6,15 @@ import Notification from './components/Notification'
 import { useContext } from 'react'
 
 const App = () => {
+  const queryClient = useQueryClient()
+  const { setNotification } = useContext(NotificationContext)
+
   const result = useQuery({
     queryKey: ['anecdotes'],
     queryFn: getAnecdotes,
     retry: false
   })
   
-  const { setNotification } = useContext(NotificationContext)
-  const queryClient = useQueryClient()
   const updateAnecdoteMutation = useMutation({
     mutationFn: updateAnecdote,
     onSuccess: (updatedAnecdote) => {
