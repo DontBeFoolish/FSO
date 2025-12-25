@@ -1,35 +1,41 @@
-import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import blogService from '../services/blogs'
 
-function BlogForm({ addBlog }) {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
+function BlogForm() {
+  const queryClient = useQueryClient()
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+    onSuccess: (newBlog) => queryClient.setQueryData(['blogs'], prev => prev.concat(newBlog)),
+    onError: (error) => console.log(error)
+  })
 
   const createBlog = (e) => {
     e.preventDefault();
-    addBlog({
-      title,
-      author,
-      url,
+    newBlogMutation.mutate({ 
+      title: e.target.title.value, 
+      author: e.target.author.value, 
+      url: e.target.url.value 
     });
-    setTitle('');
-    setAuthor('');
-    setUrl('');
+
+    e.target.title.value = ''
+    e.target.author.value = ''
+    e.target.url.value = ''
   };
 
   return (
     <form onSubmit={createBlog}>
       <label>
         Title:
-        <input value={title} onChange={({ target }) => setTitle(target.value)} />
+        <input name="title" />
       </label>
       <label>
         Author:
-        <input value={author} onChange={({ target }) => setAuthor(target.value)} />
+        <input name="author" />
       </label>
       <label>
         URL:
-        <input value={url} onChange={({ target }) => setUrl(target.value)} />
+        <input name="url" />
       </label>
       <button type="submit">Create</button>
     </form>

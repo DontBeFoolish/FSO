@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 function Blog({ blog, user, handleLike, handleDelete }) {
   const [visible, setVisible] = useState(false);
-  const isOwner = blog.user && blog.user.username === user.username;
+  // const isOwner = blog.user && blog.user.username === user.username;
+  const isOwner = true
 
   return (
     <li className="blog">
