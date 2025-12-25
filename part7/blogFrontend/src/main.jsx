@@ -10,10 +10,10 @@ const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <QueryClientProvider client={queryClient}>
-    <AuthContextProvider>  
-      <NotificationContextProvider>
+    <NotificationContextProvider>
+      <AuthContextProvider>  
         <App />
-      </NotificationContextProvider>
-    </AuthContextProvider>
+      </AuthContextProvider>
+    </NotificationContextProvider>
   </QueryClientProvider>
 );

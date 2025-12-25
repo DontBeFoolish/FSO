@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { createContext, useReducer, useEffect } from "react";
+import { createContext, useReducer, useEffect, useContext } from "react";
+import NotificationContext from "./NotificationContext";
 import loginService from '../services/login'
 import blogService from '../services/blogs'
 
@@ -18,6 +19,7 @@ const AuthContext = createContext()
 
 export const AuthContextProvider = (props) => {
   const [user, dispatchUser] = useReducer(authReducer, null)
+  const { setNotification } = useContext(NotificationContext)
 
   useEffect(() => {
     const storedUser = window.localStorage.getItem('loggedBlogappUser');
@@ -34,7 +36,8 @@ export const AuthContextProvider = (props) => {
       dispatchUser({ type: 'LOGIN', payload: user })
       blogService.setToken(user.token)
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-    }
+    },
+    onError: () => setNotification({ content: 'Invalid username or password', style: 'error', time: 5 })
   })
 
   const login = (credentials) => {

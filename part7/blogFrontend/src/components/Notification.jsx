@@ -7,7 +7,7 @@ function Notification() {
   if (!notification.content) return null
 
   return (
-    <div>
+    <div className={notification.style}>
       {notification.content}
     </div>
   );

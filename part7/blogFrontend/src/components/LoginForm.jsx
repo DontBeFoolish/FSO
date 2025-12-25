@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import AuthContext from '../contexts/AuthContext'
 
 function LoginForm() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const { login } = useContext(AuthContext)
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    login({ username, password })
   }
 
 
