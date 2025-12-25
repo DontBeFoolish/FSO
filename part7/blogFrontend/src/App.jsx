@@ -1,27 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import blogService from './services/blogs';
+import { useState, useContext } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import LoginForm from './components/LoginForm';
+import Blogs from './components/Blogs'
 import BlogForm from './components/BlogForm';
-import Blog from './components/Blog';
 import Notification from './components/Notification';
-import Togglable from './components/Togglable';
+import AuthContext from './contexts/AuthContext';
+import blogService from './services/blogs'
 
 function App() {
-  const [user, setUser] = useState(null);
+  const { user } = useContext(AuthContext)
 
-  const blogFormRef = useRef();
-
-  const result = useQuery({
+  const { data: blogs, isLoading, isError } = useQuery({
     queryKey: ['blogs'],
     queryFn: blogService.getAll,
-    select: (blogs) => [...blogs].sort((a, b) => b.likes - a.likes)
+    select: (blogs) => [...blogs].sort((a, b) => b.likes - a.likes),
+    retry: 1
   })
 
-  if (result.isLoading) return <div>loading data</div>
-  if (result.isError) return <div>service unavailable</div>
-  
-  const blogs = result.data
+  if (isLoading) return <div>loading data</div>
+  if (isError) return <div>service unavailable</div>
+
   /** 
   const handleLike = async (blog) => {
     try {
@@ -56,13 +54,7 @@ function App() {
       {user && (
         <>
           <h1>Login</h1>
-          <LoginForm
-            username={username}
-            password={password}
-            setUsername={setUsername}
-            setPassword={setPassword}
-            handleLogin={handleLogin}
-          />
+          <LoginForm />
         </>
       )}
       {!user && (
@@ -72,20 +64,8 @@ function App() {
             {/**user.name*/} logged in -
             <button type="button" /**onClick={handleLogout}*/>Logout</button>
           </p>
-          <ul>
-            {blogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                user={user}
-                //handleLike={handleLike}
-                //handleDelete={handleDelete}
-              />
-            ))}
-          </ul>
-          <Togglable buttonOpen="create blog" buttonClose="cancel" ref={blogFormRef}>
-            <BlogForm />
-          </Togglable>
+          <Blogs user={user} blogs={blogs} />
+          <BlogForm />
         </>
       )}
     </div>

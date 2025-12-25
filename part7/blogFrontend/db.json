@@ -1,11 +1,11 @@
 {
   "blogs": [
     {
-      "title": "meow-land",
-      "author": "mr meow",
+      "title": "old shit",
+      "author": "ms meow",
       "url": "google.com",
-      "votes": 0,
-      "id": 1,
+      "likes": 1,
+      "id": "2",
       "user": {
         "username": "user1",
         "name": "catty",
@@ -13,142 +13,28 @@
       }
     },
     {
-      "id": "13fd",
-      "title": "fgfgd",
-      "author": "fgdgfds",
-      "url": "fgdgfd"
+      "title": "old shit",
+      "author": "dr meow",
+      "url": "google.com",
+      "likes": 3,
+      "id": "3",
+      "user": {
+        "username": "user1",
+        "name": "catty",
+        "id": 1
+      }
     },
     {
-      "id": "d927",
-      "title": "asdfasdf",
-      "author": "sadfdfs",
-      "url": "dsfsdf"
-    },
-    {
-      "id": "8be3",
-      "title": "asdasd",
-      "author": "fasdf",
-      "url": "asdf"
-    },
-    {
-      "id": "e35a",
-      "title": "asdfasdf",
-      "author": "sdafsd",
-      "url": "f"
-    },
-    {
-      "id": "5a28",
-      "title": "asdfasdf",
-      "author": "sdf",
-      "url": "dsf"
-    },
-    {
-      "id": "2ea0",
-      "title": "assdss",
-      "author": "sss",
-      "url": "ss"
-    },
-    {
-      "id": "e7cb",
-      "title": "created new",
-      "author": "a",
-      "url": "a"
-    },
-    {
-      "id": "ed24",
-      "title": "aaaa",
-      "author": "a",
-      "url": "a"
-    },
-    {
-      "id": "cef2",
-      "title": "aaaa",
-      "author": "a",
-      "url": "a"
-    },
-    {
-      "id": "ee30",
-      "title": "mew",
-      "author": "mew",
-      "url": "mew"
-    },
-    {
-      "id": "ba87",
-      "title": "asdf",
-      "author": "asdf",
-      "url": "f"
-    },
-    {
-      "id": "b562",
-      "title": "aaa",
-      "author": "a",
-      "url": "a"
-    },
-    {
-      "id": "3ab6",
-      "title": "new brog",
-      "author": "eeee",
-      "url": "eee"
-    },
-    {
-      "id": "7795",
-      "title": "asdasfd",
-      "author": "sadf",
-      "url": "sdf"
-    },
-    {
-      "id": "7a48",
-      "title": "dsfsdf",
-      "author": "sdf",
-      "url": "df"
-    },
-    {
-      "id": "ae0a",
-      "title": "aaaa",
-      "author": "a",
-      "url": "a"
-    },
-    {
-      "id": "d8b9",
-      "title": "fff",
-      "author": "",
-      "url": ""
-    },
-    {
-      "id": "c17d",
-      "title": "asdasdf",
-      "author": "d",
-      "url": "d"
-    },
-    {
-      "id": "3bc3",
-      "title": "kkokko",
-      "author": "",
-      "url": ""
-    },
-    {
-      "id": "47ba",
-      "title": "asdfasdf",
-      "author": "asdf",
-      "url": "sdf"
-    },
-    {
-      "id": "8741",
-      "title": "asdf",
-      "author": "adsf",
-      "url": "dfs"
-    },
-    {
-      "id": "bce1",
-      "title": "dfg",
-      "author": "dfg",
-      "url": "f"
-    },
-    {
-      "id": "84f9",
-      "title": "sdfgdf",
-      "author": "fg",
-      "url": "fg"
+      "title": "old shit",
+      "author": "captain meow",
+      "url": "google.com",
+      "likes": 19,
+      "id": "4",
+      "user": {
+        "username": "user1",
+        "name": "catty",
+        "id": 1
+      }
     }
   ]
 }
