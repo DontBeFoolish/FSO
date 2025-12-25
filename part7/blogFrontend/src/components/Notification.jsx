@@ -1,8 +1,15 @@
-function Notification({ info }) {
-  if (!info) return null;
+import { useContext } from "react";
+import NotificationContext from "../contexts/NotificationContext";
+
+function Notification() {
+  const { notification } = useContext(NotificationContext)
+
+  if (!notification.content) return null
 
   return (
-    <div className={info.type}>{info.message}</div>
+    <div>
+      {notification.content}
+    </div>
   );
 }
 

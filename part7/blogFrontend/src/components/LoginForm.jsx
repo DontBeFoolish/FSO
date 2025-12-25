@@ -1,23 +1,25 @@
-function LoginForm({
-  handleLogin, username, setUsername, password, setPassword,
-}) {
+import { useState } from "react";
+
+function LoginForm() {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+  }
+
+
   return (
-    <form onSubmit={handleLogin}>
-      <label htmlFor="username">
-        Username:
+    <form onSubmit={handleSubmit}>
+      <label> Username:
         <input
-          type="text"
-          id="username"
           value={username}
           onChange={({ target }) => setUsername(target.value)}
         />
       </label>
       <br />
-      <label htmlFor="password">
-        Password:
+      <label> Password:
         <input
-          type="password"
-          id="password"
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />

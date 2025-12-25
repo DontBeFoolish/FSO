@@ -1,13 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useContext } from 'react';
+import NotificationContext from '../contexts/NotificationContext';
 import blogService from '../services/blogs'
 
 function BlogForm() {
   const queryClient = useQueryClient()
+  const { setNotification } = useContext(NotificationContext)
 
   const newBlogMutation = useMutation({
     mutationFn: blogService.create,
-    onSuccess: (newBlog) => queryClient.setQueryData(['blogs'], prev => prev.concat(newBlog)),
-    onError: (error) => console.log(error)
+    onSuccess: (newBlog) => {
+      queryClient.setQueryData(['blogs'], prev => prev.concat(newBlog))
+      setNotification(`created blog ${newBlog.title}`)
+    },
+    onError: (error) => {
+      console.error(error)
+      setNotification('Failed to create blog')
+    }
   })
 
   const createBlog = (e) => {
@@ -25,16 +34,13 @@ function BlogForm() {
 
   return (
     <form onSubmit={createBlog}>
-      <label>
-        Title:
+      <label> Title: 
         <input name="title" />
       </label>
-      <label>
-        Author:
+      <label> Author:
         <input name="author" />
       </label>
-      <label>
-        URL:
+      <label> URL:
         <input name="url" />
       </label>
       <button type="submit">Create</button>
