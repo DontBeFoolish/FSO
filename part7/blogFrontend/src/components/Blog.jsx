@@ -17,8 +17,8 @@ function Blog({ blog, user, handleLike, handleDelete }) {
         <div className="blog-details">
           <p>{blog.url}</p>
           <p>
-            {`Likes - `}
-            <span className='likes'>{blog.likes}</span>
+            {'Likes - '}
+            <span className="likes">{blog.likes}</span>
             {' '}
             <button type="button" onClick={() => handleLike(blog)}>like</button>
           </p>

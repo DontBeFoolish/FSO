@@ -23,6 +23,5 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react/jsx-one-expression-per-line': 'off',
     'object-curly-newline': 'off',
-    'jsx-a11y/label-has-associated-control': 'jsx-a11y/label-has-associated-control',
   },
 };

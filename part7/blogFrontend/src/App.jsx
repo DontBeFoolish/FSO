@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect, useRef, useContext } from 'react';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
@@ -6,25 +7,22 @@ import BlogForm from './components/BlogForm';
 import Blog from './components/Blog';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
-import showNotification from './utils/notificationHelper';
+import NotificationContext from './context/NotificationContext';
 
 function App() {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [notifInfo, setNotifInfo] = useState(null);
+  const { setNotification } = useContext(NotificationContext);
 
   const blogFormRef = useRef();
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const returnedBlogs = await blogService.getAll();
-      returnedBlogs.sort((a, b) => b.likes - a.likes);
-      setBlogs(returnedBlogs);
-    };
-    fetchBlogs();
-  }, []);
+  const { data: blogs, isLoading, isError } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll(),
+    select: (returnedBlogs) => [...returnedBlogs].sort((a, b) => b.likes - a.likes),
+    retry: 1,
+  });
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -45,8 +43,7 @@ function App() {
       setUsername('');
       setPassword('');
     } catch (error) {
-      const message = error.response.data.error;
-      showNotification(setNotifInfo, message, 'error');
+      setNotification({ message: 'login attempt failed', type: 'error' });
     }
   };
 
@@ -61,11 +58,11 @@ function App() {
       blogFormRef.current.toggleVisibility();
       const response = await blogService.create(newBlog);
       setBlogs(blogs.concat(response));
-      const message = `successfully added blog`;
-      showNotification(setNotifInfo, message, 'success');
+      const message = 'successfully added blog';
+      setNotification({ message, type: 'success' });
     } catch (error) {
       const message = error.response.data.error;
-      showNotification(setNotifInfo, message, 'error');
+      setNotification({ message, type: 'error' });
     }
   };
 
@@ -78,7 +75,7 @@ function App() {
       setBlogs(updatedBlogs);
     } catch (error) {
       const message = error.response.data.error;
-      showNotification(setNotifInfo, message, 'error');
+      setNotification({ message, type: 'error' });
     }
   };
 
@@ -88,16 +85,16 @@ function App() {
       const updatedBlogs = blogs.filter((b) => b.id !== id);
       setBlogs(updatedBlogs);
       const message = 'removed blog';
-      showNotification(setNotifInfo, message, 'success');
+      setNotification({ message, type: 'success' });
     } catch (error) {
       const message = error.response.data.error;
-      showNotification(setNotifInfo, message, 'error');
+      setNotification({ message, type: 'error' });
     }
   };
 
   return (
     <div>
-      <Notification info={notifInfo} />
+      <Notification />
       {!user && (
         <>
           <h1>Login</h1>
