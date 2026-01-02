@@ -1,41 +1,44 @@
-import { useState } from 'react';
+import { useField } from '../hooks';
+import { useCreateBlog } from '../hooks/useBlogMutation';
 
-function BlogForm({ addBlog }) {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
+function BlogForm() {
+  const { reset: resetTitle, ...title } = useField('text');
+  const { reset: resetAuthor, ...author } = useField('text');
+  const { reset: resetUrl, ...url } = useField('text');
+  const createMutation = useCreateBlog();
 
   const createBlog = (e) => {
     e.preventDefault();
-    addBlog({
-      title,
-      author,
-      url,
+
+    createMutation.mutate({
+      title: title.value,
+      author: author.value,
+      url: url.value,
+      likes: 0,
+      user: {
+        username: 'vi',
+        name: 'Vi Developer',
+      },
     });
-    setTitle('');
-    setAuthor('');
-    setUrl('');
+
+    resetTitle();
+    resetAuthor();
+    resetUrl();
   };
 
   return (
     <form onSubmit={createBlog}>
       <label>
         Title:
-        <input
-          value={title}
-          onChange={({ target }) => setTitle(target.value)}
-        />
+        <input {...title} />
       </label>
       <label>
         Author:
-        <input
-          value={author}
-          onChange={({ target }) => setAuthor(target.value)}
-        />
+        <input {...author} />
       </label>
       <label>
         URL:
-        <input value={url} onChange={({ target }) => setUrl(target.value)} />
+        <input {...url} />
       </label>
       <button type="submit">Create</button>
     </form>

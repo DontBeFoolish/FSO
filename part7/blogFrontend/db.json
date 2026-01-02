@@ -1,17 +1,6 @@
 {
   "blogs": [
     {
-      "id": "1",
-      "title": "React Query Basics",
-      "author": "Vi",
-      "url": "https://react-query.tanstack.com/",
-      "likes": 5,
-      "user": {
-        "username": "vi",
-        "name": "Vi Developer"
-      }
-    },
-    {
       "id": "2",
       "title": "Understanding Context API",
       "author": "Alice",
@@ -27,17 +16,11 @@
       "title": "JavaScript Closures",
       "author": "Bob",
       "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures",
-      "likes": 21,
+      "likes": 26,
       "user": {
         "username": "bob_dev",
         "name": "Bob Johnson"
       }
-    },
-    {
-      "id": "27e9",
-      "title": "Meow",
-      "author": "Me",
-      "url": "google.com"
     }
   ]
 }

@@ -2,17 +2,17 @@ import { useState } from 'react';
 import { useDeleteBlog, useLikeBlog } from '../hooks/useBlogMutation';
 
 function Blog({ blog, user }) {
-  const [visible, setVisible] = useState(false);
   const likeMutation = useLikeBlog();
   const deleteMutation = useDeleteBlog();
+  const [visible, setVisible] = useState(false);
   const isOwner = blog.user && blog.user.username === user.username;
 
   const handleLike = () => likeMutation.mutate(blog);
   const handleDelete = () => deleteMutation.mutate(blog.id);
 
   return (
-    <li className="blog">
-      <div className="blog-header">
+    <li>
+      <div>
         {blog.title} - {blog.author}
         <button type="button" onClick={() => setVisible(!visible)}>
           {visible ? 'hide' : 'view'}
@@ -20,11 +20,11 @@ function Blog({ blog, user }) {
       </div>
 
       {visible && (
-        <div className="blog-details">
-          <p>{blog.url}</p>
+        <div>
+          {blog.url}
           <p>
             {'Likes - '}
-            <span className="likes">{blog.likes}</span>{' '}
+            <span>{blog.likes}</span>{' '}
             <button type="button" onClick={() => handleLike()}>
               like
             </button>

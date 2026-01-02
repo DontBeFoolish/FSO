@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useField } from '../hooks';
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../contexts/AuthContext';
 
 function LoginForm() {
   const { login } = useContext(AuthContext);

@@ -1,6 +1,6 @@
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useContext } from 'react';
-import NotificationContext from '../context/NotificationContext';
+import NotificationContext from '../contexts/NotificationContext';
 import blogService from '../services/blogs';
 
 export const useLikeBlog = () => {
@@ -27,7 +27,7 @@ export const useDeleteBlog = () => {
   const { setNotification } = useContext(NotificationContext);
 
   return useMutation({
-    mutationFn: (blog) => blogService.vote(blog),
+    mutationFn: (id) => blogService.remove(id),
     onSuccess: (_, id) => {
       queryClient.setQueryData(['blogs'], (prev) =>
         prev.filter((b) => b.id !== id),
@@ -36,5 +36,23 @@ export const useDeleteBlog = () => {
     },
     onError: () =>
       setNotification({ message: 'Failed to delete blog', type: 'error' }),
+  });
+};
+
+export const useCreateBlog = () => {
+  const queryClient = useQueryClient();
+  const { setNotification } = useContext(NotificationContext);
+
+  return useMutation({
+    mutationFn: (blog) => blogService.create(blog),
+    onSuccess: (createdBlog) => {
+      queryClient.setQueryData(['blogs'], (prev) => prev.concat(createdBlog));
+      setNotification({
+        message: `Created blog ${createdBlog.title}`,
+        type: 'success',
+      });
+    },
+    onError: () =>
+      setNotification({ message: 'unable to create blog', type: 'error' }),
   });
 };

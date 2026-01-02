@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { NotificationContextProvider } from './context/NotificationContext';
-import { AuthContextProvider } from './context/AuthContext';
+import { NotificationContextProvider } from './contexts/NotificationContext';
+import { AuthContextProvider } from './contexts/AuthContext';
 import App from './App';
 
 import './index.css';
