@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+} from 'react';
 import { useMutation } from '@tanstack/react-query';
 
 import NotificationContext from './NotificationContext';
@@ -56,19 +62,20 @@ export function AuthContextProvider(props) {
     window.localStorage.removeItem('logged-blog-user');
   };
 
-  const value = useMemo(() => ({
-    user,
-    login,
-    logout,
-    isLoggingIn: loginMutation.isLoading,
-    loginError: loginMutation.isError,
-    error: loginMutation.error,
-  }), [user, loginMutation.isLoading, loginMutation.isError, loginMutation.error]);
+  const value = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+      isLoggingIn: loginMutation.isLoading,
+      loginError: loginMutation.isError,
+      error: loginMutation.error,
+    }),
+    [user, loginMutation.isLoading, loginMutation.isError, loginMutation.error],
+  );
 
   return (
-    <AuthContext.Provider value={value}>
-      {props.children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
   );
 }
 

@@ -14,16 +14,22 @@ const reducer = (state, action) => {
 const NotificationContext = createContext();
 
 export function NotificationContextProvider(props) {
-  const [notification, notificationDispatch] = useReducer(reducer, { message: '', type: null });
+  const [notification, notificationDispatch] = useReducer(reducer, {
+    message: '',
+    type: null,
+  });
 
   const setNotification = useCallback((notiData) => {
     notificationDispatch({
       type: 'SET',
       payload: { message: notiData.message, type: notiData.type },
     });
-    setTimeout(() => {
-      notificationDispatch({ type: 'CLEAR' });
-    }, (notiData.time ?? 5) * 1000);
+    setTimeout(
+      () => {
+        notificationDispatch({ type: 'CLEAR' });
+      },
+      (notiData.time ?? 5) * 1000,
+    );
   }, []);
 
   const value = useMemo(

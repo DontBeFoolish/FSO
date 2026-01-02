@@ -15,11 +15,15 @@ function Togglable(props) {
   return (
     <div>
       <div style={hideWhenVisible}>
-        <button type="button" onClick={toggleVisibility}>{props.buttonOpen}</button>
+        <button type="button" onClick={toggleVisibility}>
+          {props.buttonOpen}
+        </button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button type="button" onClick={toggleVisibility}>{props.buttonClose}</button>
+        <button type="button" onClick={toggleVisibility}>
+          {props.buttonClose}
+        </button>
       </div>
     </div>
   );

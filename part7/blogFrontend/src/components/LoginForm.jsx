@@ -1,29 +1,30 @@
-function LoginForm({
-  handleLogin, username, setUsername, password, setPassword,
-}) {
+import { useContext } from 'react';
+import { useField } from '../hooks';
+import AuthContext from '../context/AuthContext';
+
+function LoginForm() {
+  const { login } = useContext(AuthContext);
+
+  const { reset: resetUsername, ...username } = useField('text');
+  const { reset: resetPassword, ...password } = useField('password');
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+    console.log('attempting login');
+    login({ username: username.value, password: password.value });
+  };
+
   return (
     <form onSubmit={handleLogin}>
-      <label htmlFor="username">
+      <label>
         Username:
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <input {...username} />
       </label>
-      <br />
-      <label htmlFor="password">
+      <label>
         Password:
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-        />
+        <input {...password} />
       </label>
-      <br />
-      <button type="submit">login</button>
+      <button type="submit">Login</button>
     </form>
   );
 }

@@ -21,11 +21,17 @@ function BlogForm({ addBlog }) {
     <form onSubmit={createBlog}>
       <label>
         Title:
-        <input value={title} onChange={({ target }) => setTitle(target.value)} />
+        <input
+          value={title}
+          onChange={({ target }) => setTitle(target.value)}
+        />
       </label>
       <label>
         Author:
-        <input value={author} onChange={({ target }) => setAuthor(target.value)} />
+        <input
+          value={author}
+          onChange={({ target }) => setAuthor(target.value)}
+        />
       </label>
       <label>
         URL:

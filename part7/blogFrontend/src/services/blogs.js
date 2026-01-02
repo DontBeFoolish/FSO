@@ -26,6 +26,13 @@ const update = async (id) => {
   return response.data;
 };
 
+const vote = async (blog) => {
+  const response = await axios.patch(`${baseUrl}/${blog.id}`, {
+    likes: blog.likes + 1,
+  });
+  return response.data;
+};
+
 const remove = async (id) => {
   const config = {
     headers: { Authorization: token },
@@ -41,4 +48,5 @@ export default {
   create,
   update,
   remove,
+  vote,
 };

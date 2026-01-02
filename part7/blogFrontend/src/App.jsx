@@ -1,57 +1,44 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useRef, useContext } from 'react';
 import blogService from './services/blogs';
-import loginService from './services/login';
 import LoginForm from './components/LoginForm';
 import BlogForm from './components/BlogForm';
-import Blog from './components/Blog';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import NotificationContext from './context/NotificationContext';
+import AuthContext from './context/AuthContext';
+import Blogs from './components/Blogs';
 
 function App() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
+  // const { user } = useContext(AuthContext);
+  let user = {
+    username: 'meow',
+    name: 'vi',
+    token: '123',
+  };
+
+  const handleLogout = () => {
+    user = null;
+  };
+
   const { setNotification } = useContext(NotificationContext);
 
   const blogFormRef = useRef();
 
-  const { data: blogs, isLoading, isError } = useQuery({
+  const {
+    data: blogs,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['blogs'],
-    queryFn: blogService.getAll(),
-    select: (returnedBlogs) => [...returnedBlogs].sort((a, b) => b.likes - a.likes),
+    queryFn: blogService.getAll,
+    select: (returnedBlogs) =>
+      [...returnedBlogs].sort((a, b) => b.likes - a.likes),
     retry: 1,
   });
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-    if (loggedUserJSON) {
-      const loggedUser = JSON.parse(loggedUserJSON);
-      setUser(loggedUser);
-      blogService.setToken(loggedUser.token);
-    }
-  }, []);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const loggedInUser = await loginService.login({ username, password });
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(loggedInUser));
-      setUser(loggedInUser);
-      blogService.setToken(loggedInUser.token);
-      setUsername('');
-      setPassword('');
-    } catch (error) {
-      setNotification({ message: 'login attempt failed', type: 'error' });
-    }
-  };
-
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    window.localStorage.removeItem('loggedBlogappUser');
-    setUser(null);
-  };
+  if (isLoading) return <div>loading...</div>;
+  if (isError) return <div>blog service unavailable</div>;
 
   const addBlog = async (newBlog) => {
     try {
@@ -66,45 +53,13 @@ function App() {
     }
   };
 
-  const handleLike = async (blog) => {
-    try {
-      const returnedBlog = await blogService.update(blog.id);
-      const updatedBlogs = blogs
-        .map((b) => (b.id === returnedBlog.id ? returnedBlog : b))
-        .sort((a, b) => b.likes - a.likes);
-      setBlogs(updatedBlogs);
-    } catch (error) {
-      const message = error.response.data.error;
-      setNotification({ message, type: 'error' });
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await blogService.remove(id);
-      const updatedBlogs = blogs.filter((b) => b.id !== id);
-      setBlogs(updatedBlogs);
-      const message = 'removed blog';
-      setNotification({ message, type: 'success' });
-    } catch (error) {
-      const message = error.response.data.error;
-      setNotification({ message, type: 'error' });
-    }
-  };
-
   return (
     <div>
       <Notification />
       {!user && (
         <>
           <h1>Login</h1>
-          <LoginForm
-            username={username}
-            password={password}
-            setUsername={setUsername}
-            setPassword={setPassword}
-            handleLogin={handleLogin}
-          />
+          <LoginForm />
         </>
       )}
       {user && (
@@ -112,20 +67,16 @@ function App() {
           <h2>blogs</h2>
           <p>
             {user.name} logged in -
-            <button type="button" onClick={handleLogout}>Logout</button>
+            <button type="button" onClick={handleLogout}>
+              Logout
+            </button>
           </p>
-          <ul>
-            {blogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                user={user}
-                handleLike={handleLike}
-                handleDelete={handleDelete}
-              />
-            ))}
-          </ul>
-          <Togglable buttonOpen="create blog" buttonClose="cancel" ref={blogFormRef}>
+          <Blogs user={user} blogs={blogs} />
+          <Togglable
+            buttonOpen="create blog"
+            buttonClose="cancel"
+            ref={blogFormRef}
+          >
             <BlogForm addBlog={addBlog} />
           </Togglable>
         </>
