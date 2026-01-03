@@ -14,11 +14,6 @@ function BlogForm() {
       title: title.value,
       author: author.value,
       url: url.value,
-      likes: 0,
-      user: {
-        username: 'vi',
-        name: 'Vi Developer',
-      },
     });
 
     resetTitle();

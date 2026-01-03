@@ -12,6 +12,11 @@ const getAll = async () => {
   return response.data;
 };
 
+const getOne = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}`);
+  return response.data;
+};
+
 const create = async (newObj) => {
   const config = {
     headers: { Authorization: token },
@@ -23,13 +28,6 @@ const create = async (newObj) => {
 
 const update = async (id) => {
   const response = await axios.put(`${baseUrl}/${id}`);
-  return response.data;
-};
-
-const vote = async (blog) => {
-  const response = await axios.patch(`${baseUrl}/${blog.id}`, {
-    likes: blog.likes + 1,
-  });
   return response.data;
 };
 
@@ -45,8 +43,8 @@ export default {
   setToken,
   token,
   getAll,
+  getOne,
   create,
   update,
   remove,
-  vote,
 };

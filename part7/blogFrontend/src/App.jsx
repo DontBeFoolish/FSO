@@ -1,69 +1,38 @@
-import { useQuery } from '@tanstack/react-query';
-import { useRef } from 'react';
-import blogService from './services/blogs';
-import LoginForm from './components/LoginForm';
-import BlogForm from './components/BlogForm';
+import { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Notification from './components/Notification';
-import Togglable from './components/Togglable';
-import Blogs from './components/Blogs';
+import AuthContext from './contexts/AuthContext';
+
+import LoginForm from './components/LoginForm';
+import Blogs from './pages/Blogs';
+import Users from './pages/Users';
+import NavBar from './components/NavBar';
+import Blog from './pages/Blog';
 
 function App() {
-  // const { user, logout } = useContext(AuthContext);
-  const user = {
-    username: 'vi',
-    name: 'Vi Developer',
-    token: '123',
-  };
-
-  const blogFormRef = useRef();
-
-  const {
-    data: blogs,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['blogs'],
-    queryFn: blogService.getAll,
-    select: (returnedBlogs) =>
-      [...returnedBlogs].sort((a, b) => b.likes - a.likes),
-    retry: 1,
-  });
-
-  if (isLoading) return <div>loading...</div>;
-  if (isError) return <div>blog service unavailable</div>;
+  const { user } = useContext(AuthContext);
 
   return (
-    <div>
+    <>
       <Notification />
-      {!user && (
-        <>
-          <h1>Login</h1>
-          <LoginForm />
-        </>
-      )}
-      {user && (
-        <>
-          <h2>blogs</h2>
-          <p>
-            {user.name} logged in -{' '}
-            <button
-              type="button"
-              // onClick={() => logout()}
-            >
-              Logout
-            </button>
-          </p>
-          <Blogs user={user} blogs={blogs} />
-          <Togglable
-            buttonOpen="create blog"
-            buttonClose="cancel"
-            ref={blogFormRef}
-          >
-            <BlogForm />
-          </Togglable>
-        </>
-      )}
-    </div>
+      <NavBar />
+
+      <Routes>
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" replace /> : <LoginForm />}
+        />
+        <Route
+          path="/"
+          element={user ? <Blogs /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/users"
+          element={user ? <Users /> : <Navigate to="/login" replace />}
+        />
+        <Route path="/blogs/:id" element={<Blog />} />
+      </Routes>
+    </>
   );
 }
 

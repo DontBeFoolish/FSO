@@ -10,22 +10,26 @@ function LoginForm() {
 
   const handleLogin = (event) => {
     event.preventDefault();
-    console.log('attempting login');
     login({ username: username.value, password: password.value });
   };
 
   return (
-    <form onSubmit={handleLogin}>
-      <label>
-        Username:
-        <input {...username} />
-      </label>
-      <label>
-        Password:
-        <input {...password} />
-      </label>
-      <button type="submit">Login</button>
-    </form>
+    <>
+      <h1>Login</h1>
+      <form onSubmit={handleLogin}>
+        <label>
+          Username:
+          <input {...username} />
+        </label>
+        <br />
+        <label>
+          Password:
+          <input {...password} />
+        </label>
+        <br />
+        <button type="submit">Login</button>
+      </form>
+    </>
   );
 }
 

@@ -8,7 +8,7 @@ export const useLikeBlog = () => {
   const { setNotification } = useContext(NotificationContext);
 
   return useMutation({
-    mutationFn: (blog) => blogService.vote(blog),
+    mutationFn: (id) => blogService.update(id),
     onSuccess: (updatedBlog) => {
       queryClient.setQueryData(['blogs'], (prev) =>
         prev.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)),
