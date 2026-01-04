@@ -17,8 +17,10 @@ const useBlogMutations = () => {
         type: 'success',
       });
     },
-    onError: () =>
-      setNotification({ message: 'failed to create blog', type: 'error' }),
+    onError: (error) => {
+      const message = error.response?.data?.error || 'failed to create blog';
+      setNotification({ message, type: 'error' });
+    },
   });
 
   const deleteMutation = useMutation({

@@ -36,6 +36,10 @@ blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response) =
 
   const savedBlog = await blog.save();
 
+  if (!savedBlog) {
+    return response.status(500).json({ error: 'could not save blog' });
+  }
+
   user.blogs = user.blogs.concat(savedBlog._id);
   await user.save();
   const populatedBlog = await Blog.findById(savedBlog._id).populate('user', { username: 1, name: 1 });
