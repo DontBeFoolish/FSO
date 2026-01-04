@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import userService from '../services/users';
 
 function Users() {
@@ -12,8 +13,10 @@ function Users() {
     select: (returnedUsers) =>
       [...returnedUsers].sort((a, b) => b.blogs.length - a.blogs.length),
   });
+
   if (isLoading) return <div>loading users...</div>;
   if (isError) return <div>user service unavailable</div>;
+
   return (
     <table>
       <tbody>
@@ -27,7 +30,9 @@ function Users() {
         </tr>
         {users.map((user) => (
           <tr key={user.id}>
-            <td>{user.name}</td>
+            <td>
+              <Link to={`/users/${user.id}`}>{user.name}</Link>
+            </td>
             <td>{user.blogs.length}</td>
           </tr>
         ))}

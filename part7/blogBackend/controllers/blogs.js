@@ -7,6 +7,18 @@ blogsRouter.get('/', async (request, response) => {
   return response.json(result);
 });
 
+blogsRouter.get('/:id', async (request, response) => {
+  const result = await Blog.findById(request.params.id)
+    .populate('user', { username: 1, name: 1 })
+    .populate('comments', { content: 1 });
+
+  if (!result) {
+    return response.status(404).json({ error: 'blog not found' });
+  }
+
+  return response.json(result);
+});
+
 blogsRouter.post('/', tokenExtractor, userExtractor, async (request, response) => {
   const { user } = request;
 
@@ -60,6 +72,19 @@ blogsRouter.put('/:id', async (request, response) => {
 
   const populatedBlog = await updatedBlog.populate('user', { username: 1, name: 1 });
   return response.json(populatedBlog);
+});
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+
+  if (!blog) {
+    return response.status(404).end();
+  }
+
+  blog.comments = blog.comments.concat({ content: request.body.content });
+  const updatedBlog = await blog.save();
+
+  return response.status(201).json(updatedBlog);
 });
 
 module.exports = blogsRouter;

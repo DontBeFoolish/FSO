@@ -8,6 +8,7 @@ import Blogs from './pages/Blogs';
 import Users from './pages/Users';
 import NavBar from './components/NavBar';
 import Blog from './pages/Blog';
+import User from './pages/User';
 
 function App() {
   const { user } = useContext(AuthContext);
@@ -30,7 +31,14 @@ function App() {
           path="/users"
           element={user ? <Users /> : <Navigate to="/login" replace />}
         />
-        <Route path="/blogs/:id" element={<Blog />} />
+        <Route
+          path="/blogs/:id"
+          element={user ? <Blog /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/users/:id"
+          element={user ? <User /> : <Navigate to="/login" replace />}
+        />
       </Routes>
     </>
   );

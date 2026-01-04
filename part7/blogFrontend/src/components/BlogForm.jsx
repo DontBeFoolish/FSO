@@ -1,16 +1,16 @@
 import { useField } from '../hooks';
-import { useCreateBlog } from '../hooks/useBlogMutation';
+import useBlogMutations from '../hooks/useBlogMutation';
 
 function BlogForm() {
   const { reset: resetTitle, ...title } = useField('text');
   const { reset: resetAuthor, ...author } = useField('text');
   const { reset: resetUrl, ...url } = useField('text');
-  const createMutation = useCreateBlog();
+  const { createBlog } = useBlogMutations();
 
-  const createBlog = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    createMutation.mutate({
+    createBlog({
       title: title.value,
       author: author.value,
       url: url.value,
@@ -22,7 +22,7 @@ function BlogForm() {
   };
 
   return (
-    <form onSubmit={createBlog}>
+    <form onSubmit={handleSubmit}>
       <label>
         Title:
         <input {...title} />
