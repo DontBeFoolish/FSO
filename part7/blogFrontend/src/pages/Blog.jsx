@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -13,20 +13,16 @@ function Blog() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const { updateBlog, deleteBlog } = useBlogMutations();
+  const navigate = useNavigate();
 
-  const {
-    data: blog,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: blog, isLoading } = useQuery({
     queryKey: ['blog', id],
     queryFn: () => blogService.getOne(id),
     retry: 1,
   });
 
   if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Failed to load blog</div>;
-  if (!blog) return <Navigate to="/" replace />;
+  if (!blog) return <div>no blog here my friend</div>;
 
   const url = blog.url.startsWith('http') ? blog.url : `https://${blog.url}`;
   const isOwner = user && blog.user?.username === user.username;
@@ -57,7 +53,7 @@ function Blog() {
           <Button
             variant="outline-danger"
             size="sm"
-            onClick={() => deleteBlog(id)}
+            onClick={() => deleteBlog(id, { onSuccess: () => navigate('/') })}
           >
             Delete
           </Button>

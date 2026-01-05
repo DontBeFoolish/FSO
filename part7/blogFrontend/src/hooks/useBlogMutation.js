@@ -63,7 +63,7 @@ const useBlogMutations = () => {
 
   return {
     createBlog: (blog) => createMutation.mutate(blog),
-    deleteBlog: (id) => deleteMutation.mutate(id),
+    deleteBlog: (id, options) => deleteMutation.mutate(id, options),
     updateBlog: (id) => updateMutation.mutate(id),
     createComment: ({ id, content }) => commentMutation.mutate({ id, content }),
   };
