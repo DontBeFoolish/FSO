@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { Table } from 'react-bootstrap';
 import blogService from '../services/blogs';
 import BlogForm from '../components/BlogForm';
 
@@ -21,17 +22,21 @@ function Blogs() {
 
   return (
     <>
-      <ul>
-        {blogs.map((blog) => (
-          <li key={blog.id}>
-            <Link to={`/blogs/${blog.id}`}>
-              {blog.title} - {blog.author}
-            </Link>
-          </li>
-        ))}
-      </ul>
-
       <BlogForm />
+
+      <Table striped>
+        <tbody>
+          {blogs.map((blog) => (
+            <tr key={blog.id}>
+              <td>
+                <Link to={`/blogs/${blog.id}`}>
+                  {blog.title} - {blog.author}
+                </Link>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
     </>
   );
 }

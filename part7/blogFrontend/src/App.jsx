@@ -15,31 +15,33 @@ function App() {
 
   return (
     <>
-      <Notification />
       <NavBar />
+      <div className="container">
+        <Notification />
 
-      <Routes>
-        <Route
-          path="/login"
-          element={user ? <Navigate to="/" replace /> : <LoginForm />}
-        />
-        <Route
-          path="/"
-          element={user ? <Blogs /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/users"
-          element={user ? <Users /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/blogs/:id"
-          element={user ? <Blog /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/users/:id"
-          element={user ? <User /> : <Navigate to="/login" replace />}
-        />
-      </Routes>
+        <Routes>
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/" replace /> : <LoginForm />}
+          />
+          <Route
+            path="/"
+            element={user ? <Blogs /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/users"
+            element={user ? <Users /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/blogs/:id"
+            element={user ? <Blog /> : <Navigate to="/login" replace />}
+          />
+          <Route
+            path="/users/:id"
+            element={user ? <User /> : <Navigate to="/login" replace />}
+          />
+        </Routes>
+      </div>
     </>
   );
 }

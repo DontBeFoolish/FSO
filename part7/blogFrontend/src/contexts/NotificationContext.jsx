@@ -5,7 +5,7 @@ const reducer = (state, action) => {
     case 'SET':
       return { message: action.payload.message, type: action.payload.type };
     case 'CLEAR':
-      return { message: '', type: null };
+      return null;
     default:
       return state;
   }
@@ -14,10 +14,7 @@ const reducer = (state, action) => {
 const NotificationContext = createContext();
 
 export function NotificationContextProvider(props) {
-  const [notification, notificationDispatch] = useReducer(reducer, {
-    message: '',
-    type: null,
-  });
+  const [notification, notificationDispatch] = useReducer(reducer, null);
 
   const setNotification = useCallback((notiData) => {
     notificationDispatch({

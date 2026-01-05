@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
 import userService from '../services/users';
 
 function User() {
@@ -18,15 +20,26 @@ function User() {
   if (isError) return <div>Unable to load User info</div>;
 
   return (
-    <>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
-        {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
-        ))}
-      </ul>
-    </>
+    <Card className="mb-4">
+      <Card.Body>
+        <Card.Title>{user.name}</Card.Title>
+        <Card.Subtitle className="mb-3 text-muted">Added Blogs</Card.Subtitle>
+
+        {user.blogs.length === 0 ? (
+          <p className="text-muted">No blogs added yet.</p>
+        ) : (
+          <ListGroup variant="flush">
+            {user.blogs.map((blog) => (
+              <ListGroup.Item key={blog.id}>
+                <Link to={`/blogs/${blog.id}`} className="text-decoration-none">
+                  {blog.title}
+                </Link>
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+        )}
+      </Card.Body>
+    </Card>
   );
 }
 

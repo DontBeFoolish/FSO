@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
 import blogService from '../services/blogs';
 import AuthContext from '../contexts/AuthContext';
 import useBlogMutations from '../hooks/useBlogMutation';
@@ -22,7 +24,7 @@ function Blog() {
     retry: 1,
   });
 
-  if (isLoading) return <div>Loading</div>;
+  if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Failed to load blog</div>;
   if (!blog) return <Navigate to="/" replace />;
 
@@ -30,33 +32,44 @@ function Blog() {
   const isOwner = user && blog.user?.username === user.username;
 
   return (
-    <div>
-      <h2>
-        {blog.title} - {blog.author}
-      </h2>
-      <p>
-        {' '}
-        <a href={url}>{url}</a>
-      </p>
-      <p>
-        {' '}
-        {blog.likes} likes -{' '}
-        <button type="button" onClick={() => updateBlog(id)}>
-          Like
-        </button>
-      </p>
-      <p>added by {blog.user.name}</p>
-      {isOwner && (
-        <p>
-          <button type="button" onClick={() => deleteBlog(id)}>
+    <Card className="mb-4">
+      <Card.Body>
+        <Card.Title>
+          {blog.title} - {blog.author}
+        </Card.Title>
+        <Card.Text>
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            {url}
+          </a>
+        </Card.Text>
+        <Card.Text>
+          <strong>{blog.likes}</strong> likes{' '}
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={() => updateBlog(id)}
+          >
+            Like
+          </Button>
+        </Card.Text>
+        <Card.Text>Added by: {blog.user.name}</Card.Text>
+        {isOwner && (
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={() => deleteBlog(id)}
+          >
             Delete
-          </button>
-        </p>
-      )}
-      <h3>Comments</h3>
-      <CommentForm />
-      <Comments comments={blog.comments} />
-    </div>
+          </Button>
+        )}
+
+        <hr />
+
+        <h5>Comments</h5>
+        <CommentForm />
+        <Comments comments={blog.comments} />
+      </Card.Body>
+    </Card>
   );
 }
 

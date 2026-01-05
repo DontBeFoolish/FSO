@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { Table } from 'react-bootstrap';
 import userService from '../services/users';
 
 function Users() {
@@ -18,7 +19,7 @@ function Users() {
   if (isError) return <div>user service unavailable</div>;
 
   return (
-    <table>
+    <Table striped>
       <tbody>
         <tr>
           <td>
@@ -37,7 +38,7 @@ function Users() {
           </tr>
         ))}
       </tbody>
-    </table>
+    </Table>
   );
 }
 

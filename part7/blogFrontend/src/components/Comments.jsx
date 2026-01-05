@@ -1,11 +1,19 @@
+import Card from 'react-bootstrap/Card';
+import Stack from 'react-bootstrap/Stack';
+
 function Comments({ comments }) {
-  if (!comments || comments.length === 0) return <p>No comments yet</p>;
+  if (!comments || comments.length === 0) {
+    return <p className="text-muted">No comments yet</p>;
+  }
+
   return (
-    <ul>
+    <Stack gap={2} className="mb-3" style={{ marginTop: '10px' }}>
       {comments.map((comment) => (
-        <li key={comment.id}>{comment.content}</li>
+        <Card key={comment.id} className="p-2">
+          <Card.Text>{comment.content}</Card.Text>
+        </Card>
       ))}
-    </ul>
+    </Stack>
   );
 }
 

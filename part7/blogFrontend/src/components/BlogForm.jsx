@@ -1,3 +1,4 @@
+import { Form, Button } from 'react-bootstrap';
 import { useField } from '../hooks';
 import useBlogMutations from '../hooks/useBlogMutation';
 
@@ -22,21 +23,38 @@ function BlogForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Title:
-        <input {...title} />
-      </label>
-      <label>
-        Author:
-        <input {...author} />
-      </label>
-      <label>
-        URL:
-        <input {...url} />
-      </label>
-      <button type="submit">Create</button>
-    </form>
+    <Form
+      onSubmit={handleSubmit}
+      className="mb-4"
+      style={{ maxWidth: '400px' }}
+    >
+      <Form.Group className="mb-3" controlId="title">
+        <Form.Label>Title</Form.Label>
+        <Form.Control
+          type="text"
+          value={title.value}
+          onChange={title.onChange}
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="author">
+        <Form.Label>Author</Form.Label>
+        <Form.Control
+          type="text"
+          value={author.value}
+          onChange={author.onChange}
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="url">
+        <Form.Label>URL</Form.Label>
+        <Form.Control type="text" value={url.value} onChange={url.onChange} />
+      </Form.Group>
+
+      <Button variant="primary" type="submit">
+        Create
+      </Button>
+    </Form>
   );
 }
 

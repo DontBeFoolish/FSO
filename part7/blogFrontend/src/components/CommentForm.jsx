@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { Form, Button } from 'react-bootstrap';
 import { useField } from '../hooks';
 import useBlogMutations from '../hooks/useBlogMutation';
 
@@ -14,11 +15,19 @@ function CommentForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input {...content} />
-      <br />
-      <button type="submit">Create Comment</button>
-    </form>
+    <Form onSubmit={handleSubmit}>
+      <Form.Group className="mb-3" controlId="content">
+        <Form.Label>Comment</Form.Label>
+        <Form.Control
+          type="text"
+          value={content.value}
+          onChange={content.onChange}
+        />
+      </Form.Group>
+      <Button variant="secondary" type="submit">
+        Create Comment
+      </Button>
+    </Form>
   );
 }
 

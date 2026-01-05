@@ -19,7 +19,7 @@ const useBlogMutations = () => {
     },
     onError: (error) => {
       const message = error.response?.data?.error || 'failed to create blog';
-      setNotification({ message, type: 'error' });
+      setNotification({ message, type: 'danger' });
     },
   });
 
@@ -33,7 +33,7 @@ const useBlogMutations = () => {
       setNotification({ message: 'deleted blog', type: 'success' });
     },
     onError: () =>
-      setNotification({ message: 'failed to delete blog', type: 'error' }),
+      setNotification({ message: 'failed to delete blog', type: 'danger' }),
   });
 
   const updateMutation = useMutation({
@@ -48,7 +48,7 @@ const useBlogMutations = () => {
         type: 'success',
       });
     },
-    onError: () => setNotification({ message: 'Vote failed', type: 'error' }),
+    onError: () => setNotification({ message: 'Vote failed', type: 'danger' }),
   });
 
   const commentMutation = useMutation({
