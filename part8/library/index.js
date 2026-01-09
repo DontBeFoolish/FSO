@@ -133,18 +133,10 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     allBooks: (root, args) => {
-        if (args.author && args.genre) {
-          return books.filter(b => 
-            b.author === args.author && b.genres.includes(args.genre)
-          )
-        }
-        if (args.author) {
-          return books.filter(b => b.author === args.author)
-        }
-        if (args.genre) {
-          return books.filter(b => b.genres.includes(args.genre))
-        }
-        return books
+      return books.filter(b => 
+      (!args.author || b.author === args.author) &&
+      (!args.genre || b.genres.includes(args.genre))
+      )
     },
     allAuthors: () => authors,
   },
@@ -163,7 +155,7 @@ const resolvers = {
       const author = authors.find(a => a.name === args.name)
       if (!author) return null
       
-      updatedAuthor = { ...author, born: args.setBornTo }
+      const updatedAuthor = { ...author, born: args.setBornTo }
       authors = authors.map(a => a.name === updatedAuthor.name ? updatedAuthor : a)
       return updatedAuthor
     }
