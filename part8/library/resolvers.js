@@ -1,8 +1,12 @@
 const { GraphQLError } = require('graphql')
+const { PubSub } = require('graphql-subscriptions')
 const jwt = require('jsonwebtoken')
+
 const Author = require('./models/Author')
 const Book = require('./models/Book')
 const User = require('./models/user')
+
+const pubsub = new PubSub()
 
 const resolvers = {
   Query: {
@@ -11,10 +15,13 @@ const resolvers = {
     allBooks: async (root, args) => {
       if (!args.author & !args.genre) return Book.find({}).populate('author')
       if (args.genre) return Book.find({ genres: [args.genre] }).populate('author')
-      // additional filtering later
     },
     allAuthors: async () => Author.find({}),
-    me: async (root, args, context) => context.currentUser
+    me: async (root, args, context) => context.currentUser,
+    allGenres: async () => {
+      const genres = await Book.distinct('genres')
+      return genres
+    }
   },
   Mutation: {
     addBook: async (root, args, context) => {
@@ -55,8 +62,11 @@ const resolvers = {
           }
         })
       }
+      
+      const populatedBook = await book.populate('author')
+      pubsub.publish('BOOK_ADDED', { bookAdded: populatedBook })
 
-      return book.populate('author')
+      return populatedBook
     },
     editAuthor: async (root, args, context) => {
       if (!context.currentUser) {
@@ -111,6 +121,11 @@ const resolvers = {
     bookCount: (root) => { // for later
       return books.filter(book => book.author === root.name).length
     },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator('BOOK_ADDED')
+    }
   }
 }
 

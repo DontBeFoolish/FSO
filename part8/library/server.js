@@ -1,8 +1,14 @@
-require('dotenv').config()
-
 const { ApolloServer } = require('@apollo/server')
-const { startStandaloneServer } = require('@apollo/server/standalone')
 const jwt = require('jsonwebtoken')
+const { ApolloServerPluginDrainHttpServer } = require('@apollo/server/plugin/drainHttpServer')
+const { expressMiddleware } = require('@as-integrations/express5')
+const cors = require('cors')
+const express = require('express')
+const { makeExecutableSchema } = require('@graphql-tools/schema')
+const http = require('http')
+const { WebSocketServer } = require('ws')
+const { useServer } = require('graphql-ws/use/ws')
+
 const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
 const User = require('./models/user')
@@ -16,21 +22,50 @@ const getUserFromAuth = (auth) => {
   return User.findById(decodedToken.id)
 }
 
-const startServer = (port) => {
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+const startServer = async (port) => {
+  const app = express()
+  const httpServer = http.createServer(app)
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/',
   })
 
-  startStandaloneServer(server, {
-    listen: { port: 4000 },
-    context: async ({ req }) => {
-      const currentUser = await getUserFromAuth(req.headers.authorization)
-      return { currentUser }
-    }
-  }).then(({ url }) => {
-    console.log(`Server ready at ${url}`)
+  const schema = makeExecutableSchema({ typeDefs, resolvers })
+  const serverCleanup = useServer({ schema }, wsServer)
+
+  const server = new ApolloServer({
+    schema,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose()
+            },
+          }
+        },
+      },
+    ],
   })
+
+  await server.start()
+
+  app.use(
+    '/',
+    cors(),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const auth = req.headers.authorization
+        const currentUser = await getUserFromAuth(auth)
+        return { currentUser }
+      },
+    }),
+  )
+
+  httpServer.listen(port, () => console.log(`Server live on ${port}`))
 }
 
 module.exports = startServer
