@@ -13,8 +13,8 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      if (!args.author & !args.genre) return Book.find({}).populate('author')
-      if (args.genre) return Book.find({ genres: [args.genre] }).populate('author')
+      if (!args.author && !args.genre) return Book.find({}).populate('author')
+      if (args.genre) return Book.find({ genres: args.genre }).populate('author')
     },
     allAuthors: async () => Author.find({}),
     me: async (root, args, context) => context.currentUser,
@@ -32,6 +32,7 @@ const resolvers = {
           }
         })
       }
+      console.log('user found')
 
       let author = await Author.findOne({ name: args.author })
       if (!author) {
@@ -48,10 +49,13 @@ const resolvers = {
           })
         }
       }
+      console.log(author)
 
       const book = new Book({ ...args, author: author._id })
+      console.log(book)
       
       try {
+        console.log('saving book')
         await book.save()
       } catch (error) {
         throw new GraphQLError('failed to save book', {
@@ -62,8 +66,10 @@ const resolvers = {
           }
         })
       }
+      console.log('book saved')
       
       const populatedBook = await book.populate('author')
+      console.log(populatedBook)
       pubsub.publish('BOOK_ADDED', { bookAdded: populatedBook })
 
       return populatedBook

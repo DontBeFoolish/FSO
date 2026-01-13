@@ -4,6 +4,7 @@ const schema = mongoose.Schema({
   username: {
     type: String,
     required: true,
+    unique: true,
     minlength: 5
   },
   favoriteGenre: {
